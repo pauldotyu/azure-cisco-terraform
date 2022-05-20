@@ -11,6 +11,9 @@ az vm image list -f cisco --all
 az vm image terms accept --urn cisco:cisco-csr-1000v:16_10-byol:16.10.220190622
 ```
 
+> If you don't do the above, you may run into an error message that like this:
+> You have not accepted the legal terms on this subscription: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' for this plan. Before the subscription can be used, you need to accept the legal terms of the image. To read and accept legal terms, use the Azure CLI commands described at https://go.microsoft.com/fwlink/?linkid=2110637 or the PowerShell commands available at https://go.microsoft.com/fwlink/?linkid=862451. Alternatively, deploying via the Azure portal provides a UI experience for reading and accepting the legal terms. Offer details: publisher='cisco' offer = 'cisco-csr-1000v', sku = '16_10-byol'
+
 Make sure your VPN gateway is provisioned in Azure and update the csr-\*.config file (depending on which VPN gateway you deployed in Azure)
 
 ```sh
@@ -30,31 +33,32 @@ Cisco help - https://github.com/jwrightazure/lab/tree/master/csr-vpn-to-azurevpn
 https://www.cisco.com/c/en/us/td/docs/routers/csr1000/software/azu/b_csr1000config-azure/b_csr1000config-azure_chapter_011.html
 
 ```text
-configure terminal
-
 # erase configuration if needed
 CSR1#write erase
 
 CSR1#configure terminal
+
+CSR1#configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
+```
 
-# paste in the router config (make sure you update the Interface0 and Interface1 IP addresses from Azure)
+Paste in the router config (make sure you update the Interface0 and Interface1 IP addresses from Azure) then hit Ctrl+Z
 
-Ctrl+Z
+> To find your instance 0 and instance 1 IPs for VPN Gateway on Virtual WAN, go to your virtual hub, click on the VPN (Site to site) link in the left navigation, then click on View/Configure for Gateway configuration.
 
-# validate tunnel0 is up
+Now validate tunnel
+
+```text
+# validate tunnel0 is up - look for "Tunnel0 is up, line protocol is up"
 sh int tu0
 
-# validate tunnel0 is up
+# validate tunnel1 is up - look for "Tunnel1 is up, line protocol is up"
 sh int tu1
-
-# validate tunnel11 is up
-sh int tu11
 
 # validate tunnel status is "READY".
 sh crypto ikev2 sa
 
-# validate crypto session "Session status: UP-ACTIVE"
+# validate crypto session - look for "Session status: UP-ACTIVE"
 show crypto session
 
 # Check that DC1 is controlling outbound BGP advertisement

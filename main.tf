@@ -32,36 +32,35 @@ resource "azurerm_virtual_network" "vn" {
   name                = "vn-${local.project_name}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  address_space       = ["10.55.0.0/24"]
+  address_space       = [var.vnet_cidr]
 }
 
 resource "azurerm_subnet" "out" {
   name                 = "sn-${local.project_name}-out"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vn.name
-  address_prefixes     = ["10.55.0.0/26"]
+  address_prefixes     = [var.subnet_out_cidr]
 }
-
 
 resource "azurerm_subnet" "in" {
   name                 = "sn-${local.project_name}-in"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vn.name
-  address_prefixes     = ["10.55.0.64/26"]
+  address_prefixes     = [var.subnet_in_cidr]
 }
 
 resource "azurerm_subnet" "vm" {
   name                 = "sn-${local.project_name}-vm"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vn.name
-  address_prefixes     = ["10.55.0.128/26"]
+  address_prefixes     = [var.subnet_vm_cidr]
 }
 
 resource "azurerm_subnet" "bh" {
   name                 = "AzureBastionSubnet"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vn.name
-  address_prefixes     = ["10.55.0.192/26"]
+  address_prefixes     = [var.subnet_bh_cidr]
 }
 
 resource "azurerm_network_security_group" "bh" {
@@ -189,13 +188,14 @@ resource "azurerm_linux_virtual_machine" "csr" {
   resource_group_name             = azurerm_resource_group.rg.name
   location                        = azurerm_resource_group.rg.location
   size                            = "Standard_D2_v2"
-  admin_username                  = local.admin_username
-  disable_password_authentication = true
+  admin_username                  = var.admin_username
+  admin_password                  = var.admin_password
+  disable_password_authentication = false
 
-  admin_ssh_key {
-    username   = local.admin_username
-    public_key = file("~/.ssh/id_rsa.pub")
-  }
+  # admin_ssh_key {
+  #   username   = local.admin_username
+  #   public_key = file("~/.ssh/id_rsa.pub")
+  # }
 
   network_interface_ids = [
     azurerm_network_interface.out.id,
@@ -241,13 +241,14 @@ resource "azurerm_linux_virtual_machine" "vm" {
   resource_group_name             = azurerm_resource_group.rg.name
   location                        = azurerm_resource_group.rg.location
   size                            = "Standard_B1s"
-  admin_username                  = local.admin_username
-  disable_password_authentication = true
+  admin_username                  = var.admin_username
+  admin_password                  = var.admin_password
+  disable_password_authentication = false
 
-  admin_ssh_key {
-    username   = local.admin_username
-    public_key = file("~/.ssh/id_rsa.pub")
-  }
+  # admin_ssh_key {
+  #   username   = local.admin_username
+  #   public_key = file("~/.ssh/id_rsa.pub")
+  # }
 
   network_interface_ids = [
     azurerm_network_interface.vm.id
@@ -284,4 +285,25 @@ resource "azurerm_route_table" "rt" {
 resource "azurerm_subnet_route_table_association" "rta" {
   subnet_id      = azurerm_subnet.vm.id
   route_table_id = azurerm_route_table.rt.id
+}
+
+resource "local_file" "csr_vwan" {
+  filename = "csr-vwan.config"
+  content = templatefile("csr-vwan.config.tmpl",
+    {
+      SUBNET_OUT            = split("/", var.subnet_out_cidr)[0],
+      SUBNET_OUT_CIDR       = var.subnet_out_cidr,
+      SUBNET_IN             = split("/", var.subnet_in_cidr)[0],
+      SUBNET_IN_CIDR        = var.subnet_in_cidr,
+      SUBNET_VM             = split("/", var.subnet_vm_cidr)[0],
+      SUBNET_VM_CIDR        = var.subnet_vm_cidr,
+      SUBNET_MASK           = var.subnet_mask,
+      INSTANCE_0_PUBLIC_IP  = var.instance_0_public_ip,
+      INSTANCE_1_PUBLIC_IP  = var.instance_1_public_ip,
+      PRE_SHARED_KEY        = var.pre_shared_key,
+      ROUTE_OUT_SUBNET      = var.route_out_subnet,
+      ROUTE_OUT_SUBNET_MASK = var.route_out_subnet_mask,
+      ROUTE_OUT_GATEWAY_IP  = var.route_out_gateway_ip,
+    }
+  )
 }

@@ -1,6 +1,6 @@
 terraform {
   cloud {
-    organization = "pauldotyu"
+    organization = "contosouniversity"
 
     workspaces {
       name = "azure-cisco-terraform"

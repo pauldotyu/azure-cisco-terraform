@@ -1,6 +1,6 @@
-ip prefix-list filter-DC1-out seq 5 permit 10.55.0.0/26
-ip prefix-list filter-DC1-out seq 10 permit 10.55.0.64/26
-ip prefix-list filter-DC1-out seq 15 permit 10.55.0.128/26
+ip prefix-list filter-DC1-out seq 5 permit ${SUBNET_OUT_CIDR}
+ip prefix-list filter-DC1-out seq 10 permit ${SUBNET_IN_CIDR}
+ip prefix-list filter-DC1-out seq 15 permit ${SUBNET_VM_CIDR}
 
 crypto ikev2 proposal az-PROPOSAL 
  encryption aes-cbc-256 aes-cbc-128 3des
@@ -12,24 +12,24 @@ crypto ikev2 policy az-POLICY
 !
 crypto ikev2 keyring key-peer1
  peer azvpn1
-  address "Instance0"
-  pre-shared-key Msft123Msft123
+  address ${INSTANCE_0_PUBLIC_IP}
+  pre-shared-key ${PRE_SHARED_KEY}
 !
 crypto ikev2 keyring key-peer2
  peer azvpn2
-  address "Instance1"
-  pre-shared-key Msft123Msft123
+  address ${INSTANCE_1_PUBLIC_IP}
+  pre-shared-key ${PRE_SHARED_KEY}
 !
 crypto ikev2 profile az-PROFILE1
  match address local interface GigabitEthernet1
- match identity remote address "Instance0" 255.255.255.255 
+ match identity remote address ${INSTANCE_0_PUBLIC_IP} 255.255.255.255 
  authentication remote pre-share
  authentication local pre-share
  keyring local key-peer1
 !
 crypto ikev2 profile az-PROFILE2
  match address local interface GigabitEthernet1
- match identity remote address "Instance1" 255.255.255.255 
+ match identity remote address ${INSTANCE_1_PUBLIC_IP} 255.255.255.255 
  authentication remote pre-share
  authentication local pre-share
  keyring local key-peer2
@@ -53,7 +53,7 @@ interface Tunnel0
  ip tcp adjust-mss 1350
  tunnel source GigabitEthernet1
  tunnel mode ipsec ipv4
- tunnel destination "Instance0"
+ tunnel destination ${INSTANCE_0_PUBLIC_IP}
  tunnel protection ipsec profile az-VTI1
 !
 interface Tunnel1
@@ -61,7 +61,7 @@ interface Tunnel1
  ip tcp adjust-mss 1350
  tunnel source GigabitEthernet1
  tunnel mode ipsec ipv4
- tunnel destination "Instance1"
+ tunnel destination ${INSTANCE_1_PUBLIC_IP}
  tunnel protection ipsec profile az-VTI2
 !
 router bgp 65002
@@ -75,9 +75,9 @@ router bgp 65002
  neighbor 192.168.1.13 update-source Loopback0
  !
  address-family ipv4
-  network 10.55.0.0/26 mask 255.255.255.192
-  network 10.55.0.64/26 mask 255.255.255.192
-  network 10.55.0.128/26 mask 255.255.255.192
+  network ${SUBNET_OUT} mask ${SUBNET_MASK}
+  network ${SUBNET_IN} mask ${SUBNET_MASK}
+  network ${SUBNET_VM} mask ${SUBNET_MASK}
   neighbor 192.168.1.12 activate
   neighbor 192.168.1.12 soft-reconfiguration inbound
   neighbor 192.168.1.13 activate
@@ -87,6 +87,6 @@ router bgp 65002
   maximum-paths 4
  exit-address-family
 
-ip route 10.55.0.128/26 255.255.255.192 10.55.0.1
+ip route ${ROUTE_OUT_SUBNET} ${ROUTE_OUT_SUBNET_MASK} ${ROUTE_OUT_GATEWAY_IP}
 ip route 192.168.1.13 255.255.255.255 Tunnel1
 ip route 192.168.1.12 255.255.255.255 Tunnel0
