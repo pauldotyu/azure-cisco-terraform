@@ -58,10 +58,6 @@ sh ip bgp neighbors 192.168.0.13 advertised-routes
 
 # Make sure BGP learned routes are now in the route table. Note there are 2 next hops. This is due to the max path configurations under BGP. Traffic to that destination will load share across both tunnels. You can prepend routes if you want to prefer a specific tunnel.
 sh ip route bgp
-
-# Source ping from inside interface of CSR1 to the VMs in VNET 10/20**
-ping 10.10.10.4 source gi2
-ping 10.20.10.4 source gi2
 ```
 
 More key Cisco commands:
