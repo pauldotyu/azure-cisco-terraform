@@ -17,6 +17,16 @@ variable "instance_1_public_ip" {
   description = "Pass this in at runtime"
 }
 
+variable "instance_0_bgp_ip" {
+  type        = string
+  description = "Pass this in at runtime"
+}
+
+variable "instance_1_bgp_ip" {
+  type        = string
+  description = "Pass this in at runtime"
+}
+
 variable "pre_shared_key" {
   type        = string
   sensitive   = true

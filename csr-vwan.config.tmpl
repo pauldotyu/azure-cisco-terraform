@@ -67,26 +67,26 @@ interface Tunnel1
 router bgp 65002
  bgp router-id interface Loopback0
  bgp log-neighbor-changes
- neighbor 192.168.1.12 remote-as 65515
- neighbor 192.168.1.12 ebgp-multihop 5
- neighbor 192.168.1.12 update-source Loopback0
- neighbor 192.168.1.13 remote-as 65515
- neighbor 192.168.1.13 ebgp-multihop 5
- neighbor 192.168.1.13 update-source Loopback0
+ neighbor ${INSTANCE_0_BGP_IP} remote-as 65515
+ neighbor ${INSTANCE_0_BGP_IP} ebgp-multihop 5
+ neighbor ${INSTANCE_0_BGP_IP} update-source Loopback0
+ neighbor ${INSTANCE_1_BGP_IP} remote-as 65515
+ neighbor ${INSTANCE_1_BGP_IP} ebgp-multihop 5
+ neighbor ${INSTANCE_1_BGP_IP} update-source Loopback0
  !
  address-family ipv4
   network ${SUBNET_OUT} mask ${SUBNET_MASK}
   network ${SUBNET_IN} mask ${SUBNET_MASK}
   network ${SUBNET_VM} mask ${SUBNET_MASK}
-  neighbor 192.168.1.12 activate
-  neighbor 192.168.1.12 soft-reconfiguration inbound
-  neighbor 192.168.1.13 activate
-  neighbor 192.168.1.13 soft-reconfiguration inbound
-  neighbor 192.168.1.12 prefix-list filter-DC1-out out
-  neighbor 192.168.1.13 prefix-list filter-DC1-out out
+  neighbor ${INSTANCE_0_BGP_IP} activate
+  neighbor ${INSTANCE_0_BGP_IP} soft-reconfiguration inbound
+  neighbor ${INSTANCE_1_BGP_IP} activate
+  neighbor ${INSTANCE_1_BGP_IP} soft-reconfiguration inbound
+  neighbor ${INSTANCE_0_BGP_IP} prefix-list filter-DC1-out out
+  neighbor ${INSTANCE_1_BGP_IP} prefix-list filter-DC1-out out
   maximum-paths 4
  exit-address-family
 
 ip route ${ROUTE_OUT_SUBNET} ${ROUTE_OUT_SUBNET_MASK} ${ROUTE_OUT_GATEWAY_IP}
-ip route 192.168.1.13 255.255.255.255 Tunnel1
-ip route 192.168.1.12 255.255.255.255 Tunnel0
+ip route ${INSTANCE_1_BGP_IP} 255.255.255.255 Tunnel1
+ip route ${INSTANCE_0_BGP_IP} 255.255.255.255 Tunnel0

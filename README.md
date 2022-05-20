@@ -53,8 +53,8 @@ sh crypto ikev2 sa
 show crypto session
 
 # Check that DC1 is controlling outbound BGP advertisement
-sh ip bgp neighbors 192.168.0.12 advertised-routes
-sh ip bgp neighbors 192.168.0.13 advertised-routes
+sh ip bgp neighbors 10.44.0.12 advertised-routes
+sh ip bgp neighbors 10.44.0.13 advertised-routes
 
 # Make sure BGP learned routes are now in the route table. Note there are 2 next hops. This is due to the max path configurations under BGP. Traffic to that destination will load share across both tunnels. You can prepend routes if you want to prefer a specific tunnel.
 sh ip route bgp

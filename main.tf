@@ -300,6 +300,8 @@ resource "local_file" "csr_vwan" {
       SUBNET_MASK           = var.subnet_mask,
       INSTANCE_0_PUBLIC_IP  = var.instance_0_public_ip,
       INSTANCE_1_PUBLIC_IP  = var.instance_1_public_ip,
+      INSTANCE_0_BGP_IP     = var.instance_0_bgp_ip,
+      INSTANCE_1_BGP_IP     = var.instance_1_bgp_ip,
       PRE_SHARED_KEY        = var.pre_shared_key,
       ROUTE_OUT_SUBNET      = var.route_out_subnet,
       ROUTE_OUT_SUBNET_MASK = var.route_out_subnet_mask,

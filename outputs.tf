@@ -3,6 +3,6 @@ output "public_ip" {
 }
 
 output "csr_config" {
-  value = local_file.csr_vwan.content
+  value     = local_file.csr_vwan.content
   sensitive = true
 }
