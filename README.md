@@ -14,6 +14,12 @@ az vm image terms accept --urn cisco:cisco-csr-1000v:16_10-byol:16.10.220190622
 > If you don't do the above, you may run into an error message that like this:
 > You have not accepted the legal terms on this subscription: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' for this plan. Before the subscription can be used, you need to accept the legal terms of the image. To read and accept legal terms, use the Azure CLI commands described at https://go.microsoft.com/fwlink/?linkid=2110637 or the PowerShell commands available at https://go.microsoft.com/fwlink/?linkid=862451. Alternatively, deploying via the Azure portal provides a UI experience for reading and accepting the legal terms. Offer details: publisher='cisco' offer = 'cisco-csr-1000v', sku = '16_10-byol'
 
+Once the terraform has successfully provisioned the resources, you can run the following command to output the Cisco configuration file. Copy the contents to your clipboard.
+
+```sh
+terraform output -raw csr_config
+```
+
 When logging into the Cisco CSR, you need to ssh using the proper algorithm:
 
 ```sh
