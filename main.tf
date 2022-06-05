@@ -277,7 +277,14 @@ resource "azurerm_route_table" "rt" {
     name                   = "To-10-44"
     address_prefix         = "10.44.0.0/16"
     next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = "10.55.0.4"
+    next_hop_in_ip_address = "10.55.0.68"
+  }
+
+  route {
+    name                   = "To-Internet"
+    address_prefix         = "0.0.0.0/0"
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = "10.55.0.68"
   }
 }
 

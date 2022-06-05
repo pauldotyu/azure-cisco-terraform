@@ -88,5 +88,5 @@ router bgp 65002
  exit-address-family
 
 ip route ${ROUTE_OUT_SUBNET} ${ROUTE_OUT_SUBNET_MASK} ${ROUTE_OUT_GATEWAY_IP}
-ip route ${INSTANCE_1_BGP_IP} 255.255.255.255 Tunnel1
 ip route ${INSTANCE_0_BGP_IP} 255.255.255.255 Tunnel0
+ip route ${INSTANCE_1_BGP_IP} 255.255.255.255 Tunnel1
