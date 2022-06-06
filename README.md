@@ -170,7 +170,7 @@ Peer: 20.118.155.190 port 4500
 Check that DC1 is controlling outbound BGP advertisement
 
 ```text
-sh ip bgp neighbors 10.44.0.12 advertised-routes
+sh ip bgp neighbors 10.44.0.14 advertised-routes
 BGP table version is 5, local router ID is 172.16.0.4
 Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
               r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter,
@@ -185,7 +185,7 @@ RPKI validation codes: V valid, I invalid, N Not found
 
 Total number of prefixes 2
 
-sh ip bgp neighbors 10.44.0.13 advertised-routes
+sh ip bgp neighbors 10.44.0.15 advertised-routes
 BGP table version is 5, local router ID is 172.16.0.4
 Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
               r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter,
